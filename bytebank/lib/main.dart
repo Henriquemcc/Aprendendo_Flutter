@@ -8,21 +8,42 @@ void main() => runApp(MaterialApp(
         floatingActionButton: FloatingActionButton(
           child: Icon(Icons.add),
         ),
-        body: Column(
-          children: [
-            Card(
-                child: ListTile(
-              leading: Icon(Icons.monetization_on),
-              title: Text("R\$ 1000.00"),
-              subtitle: Text("37890"),
-            )),
-            Card(
-                child: ListTile(
-              leading: Icon(Icons.monetization_on),
-              title: Text("R\$ 800.00"),
-              subtitle: Text("379990"),
-            ))
-          ],
-        ),
+        body: ListaTransferencias(),
       ),
     ));
+
+class ListaTransferencias extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        ItemTransferencia(Transferencia(100.00, "12345")),
+        ItemTransferencia(Transferencia(200.00, "12346")),
+        ItemTransferencia(Transferencia(300.00, "12347")),
+      ],
+    );
+  }
+}
+
+class ItemTransferencia extends StatelessWidget {
+  final Transferencia _transferencia;
+
+  ItemTransferencia(this._transferencia);
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+        child: ListTile(
+      leading: Icon(Icons.monetization_on),
+      title: Text("R\$ ${_transferencia.valor.toString()}"),
+      subtitle: Text("${_transferencia.numeroContaDestino}"),
+    ));
+  }
+}
+
+class Transferencia {
+  double valor;
+  String numeroContaDestino;
+
+  Transferencia(this.valor, this.numeroContaDestino);
+}
