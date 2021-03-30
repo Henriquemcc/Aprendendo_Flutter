@@ -1,17 +1,21 @@
 import 'package:flutter/material.dart';
 
-void main() => runApp(MaterialApp(
-      home: Scaffold(
-        appBar: AppBar(
-          title: Text('Transferências'),
-        ),
-        floatingActionButton: FloatingActionButton(
-          child: Icon(Icons.add),
-        ),
-        body: ListaTransferencias(),
+/// Função principal
+void main() {
+  runApp(MaterialApp(
+    home: Scaffold(
+      body: ListaTransferencias(),
+      appBar: AppBar(
+        title: Text('Transferências'),
       ),
-    ));
+      floatingActionButton: FloatingActionButton(
+        child: Icon(Icons.add),
+      ),
+    ),
+  ));
+}
 
+/// Classe que implementará o widget do histórico de transferências da conta do usuário
 class ListaTransferencias extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -25,6 +29,7 @@ class ListaTransferencias extends StatelessWidget {
   }
 }
 
+,/// Classe que implementará o widget de cada item de transferência que é exibido no widget ListaTransferencias
 class ItemTransferencia extends StatelessWidget {
   final Transferencia _transferencia;
 
@@ -41,9 +46,10 @@ class ItemTransferencia extends StatelessWidget {
   }
 }
 
+/// Classe que armazenará os dados de cada transferência, valor e o número da conta destino
 class Transferencia {
-  double valor;
-  String numeroContaDestino;
+  final double valor;
+  final String numeroContaDestino;
 
   Transferencia(this.valor, this.numeroContaDestino);
 }
