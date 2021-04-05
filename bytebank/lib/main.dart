@@ -48,6 +48,7 @@ class FormularioTransferencia extends StatelessWidget {
         ));
   }
 
+  /// Função que cria a transferência
   void _criarTransferencia(BuildContext context) {
     final String numeroConta =
         int.tryParse(_controladorCampoNumeroConta.text).toString();
@@ -62,6 +63,7 @@ class FormularioTransferencia extends StatelessWidget {
   }
 }
 
+/// Widget de entrada de texto do número da conta e do valor
 class Editor extends StatelessWidget {
   final TextEditingController controlador;
   final String rotulo;
