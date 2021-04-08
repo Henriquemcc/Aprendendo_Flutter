@@ -8,9 +8,15 @@ class BytebankApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: Scaffold(
-        body: ListaTransferencias(),
+      theme: ThemeData(
+        primaryColor: Colors.green[900],
+        accentColor: Colors.blueAccent[700],
+        buttonTheme: ButtonThemeData(
+          buttonColor: Colors.blueAccent[700],
+          textTheme: ButtonTextTheme.primary,
+        ),
       ),
+      home: ListaTransferencias(),
     );
   }
 }
@@ -103,6 +109,7 @@ class Editor extends StatelessWidget {
 /// Widget da lista de transferências
 class ListaTransferencias extends StatefulWidget {
   final List<Transferencia> _transferencias = List();
+
   @override
   State<StatefulWidget> createState() {
     return _ListaTransferenciasState();
