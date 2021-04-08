@@ -15,6 +15,55 @@ class BytebankApp extends StatelessWidget {
   }
 }
 
+/// Widget do formulário de transferência
+class FormularioTransferencia extends StatelessWidget {
+  final TextEditingController _controladorCampoNumeroConta =
+      TextEditingController();
+  final TextEditingController _controladorCampoValor = TextEditingController();
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+        appBar: AppBar(
+          title: Text('Criando Transferência'),
+        ),
+        body: Column(
+          children: <Widget>[
+            Editor(
+              controlador: _controladorCampoNumeroConta,
+              dica: '0000',
+              rotulo: 'Número da conta',
+            ),
+            Editor(
+              dica: '0.00',
+              controlador: _controladorCampoValor,
+              rotulo: 'Valor',
+              icone: Icons.monetization_on,
+            ),
+            RaisedButton(
+              child: Text('Confirmar'),
+              onPressed: () => _criarTransferencia(context),
+            ),
+          ],
+        ));
+  }
+
+  /// Função que cria a transferência
+  void _criarTransferencia(BuildContext context) {
+    final String numeroConta =
+        int.tryParse(_controladorCampoNumeroConta.text).toString();
+    final double valor = double.tryParse(_controladorCampoValor.text);
+    if (numeroConta != null && valor != null) {
+      final transferenciaCriada = Transferencia(valor, numeroConta);
+      debugPrint('Criando transferência');
+      debugPrint('$transferenciaCriada');
+      Navigator.pop(context, transferenciaCriada);
+      Scaffold.of(context)
+          .showSnackBar(SnackBar(content: Text('$transferenciaCriada')));
+    }
+  }
+}
+
 /// Widget de entrada de texto do número da conta e do valor
 class Editor extends StatelessWidget {
   final TextEditingController controlador;
@@ -42,52 +91,45 @@ class Editor extends StatelessWidget {
   }
 }
 
-/// Widget do formulário de transferência
-class FormularioTransferencia extends StatelessWidget {
-  final TextEditingController _controladorCampoNumeroConta =
-      TextEditingController();
-  final TextEditingController _controladorCampoValor = TextEditingController();
+/// Widget da lista de transferências
+class ListaTransferencias extends StatefulWidget {
+  final List<Transferencia> _transferencias = List();
+  @override
+  State<StatefulWidget> createState() {
+    return _ListaTransferenciasState();
+  }
+}
 
+/// Widget da lista de transferências
+class _ListaTransferenciasState extends State<ListaTransferencias> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: Text("Criando transferência"),
-        ),
-        body: Column(
-          children: <Widget>[
-            Editor(
-              controlador: _controladorCampoNumeroConta,
-              rotulo: 'Número da conta',
-              dica: '0000',
-            ),
-            Editor(
-              controlador: _controladorCampoValor,
-              rotulo: "Valor",
-              dica: "0.00",
-              icone: Icons.monetization_on,
-            ),
-            RaisedButton(
-              onPressed: () => _criarTransferencia(context),
-              child: Text("Confirmar"),
-            ),
-          ],
-        ));
-  }
-
-  /// Função que cria a transferência
-  void _criarTransferencia(BuildContext context) {
-    final String numeroConta =
-        int.tryParse(_controladorCampoNumeroConta.text).toString();
-    final double valor = double.tryParse(_controladorCampoValor.text);
-    if (numeroConta != null && numeroConta != null) {
-      final transferenciaCriada = Transferencia(valor, numeroConta);
-      debugPrint('$transferenciaCriada');
-      Navigator.pop(context, transferenciaCriada);
-      debugPrint('Criando transferência');
-      Scaffold.of(context)
-          .showSnackBar(SnackBar(content: Text("$transferenciaCriada")));
-    }
+      appBar: AppBar(
+        title: Text('Transferências'),
+      ),
+      body: ListView.builder(
+        itemCount: widget._transferencias.length,
+        itemBuilder: (context, indice) {
+          final transferencia = widget._transferencias[indice];
+          return ItemTransferencia(transferencia);
+        },
+      ),
+      floatingActionButton: FloatingActionButton(
+        child: Icon(Icons.add),
+        onPressed: () {
+          final Future<Transferencia> future =
+              Navigator.push(context, MaterialPageRoute(builder: (context) {
+            return FormularioTransferencia();
+          }));
+          future.then((transferenciaRecebida) {
+            debugPrint('chegou no then do future');
+            debugPrint('$transferenciaRecebida');
+            widget._transferencias.add(transferenciaRecebida);
+          });
+        },
+      ),
+    );
   }
 }
 
@@ -102,48 +144,9 @@ class ItemTransferencia extends StatelessWidget {
     return Card(
         child: ListTile(
       leading: Icon(Icons.monetization_on),
-      title: Text("R\$ ${_transferencia.valor.toString()}"),
-      subtitle: Text("${_transferencia.numeroContaDestino}"),
+      title: Text('R\$ ${_transferencia.valor.toString()}'),
+      subtitle: Text(_transferencia.numeroContaDestino),
     ));
-  }
-}
-
-/// Widget da lista de transferências
-class ListaTransferencias extends StatelessWidget {
-  final List<Transferencia> _transferencias = List();
-
-  @override
-  Widget build(BuildContext context) {
-    _transferencias.add(Transferencia(100.0, '1000'));
-    _transferencias.add(Transferencia(100.0, '1000'));
-    _transferencias.add(Transferencia(100.0, '1000'));
-    _transferencias.add(Transferencia(100.0, '1000'));
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Transferências'),
-      ),
-      body: ListView.builder(
-        itemCount: _transferencias.length,
-        itemBuilder: (context, indice) {
-          final transferencia = _transferencias[indice];
-          return ItemTransferencia(transferencia);
-        },
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          final Future<Transferencia> future =
-              Navigator.push(context, MaterialPageRoute(builder: (context) {
-            return FormularioTransferencia();
-          }));
-          future.then((transferenciaRecebida) {
-            debugPrint('chegou no them do future');
-            debugPrint('$transferenciaRecebida');
-            _transferencias.add(transferenciaRecebida);
-          });
-        },
-        child: Icon(Icons.add),
-      ),
-    );
   }
 }
 
@@ -156,6 +159,6 @@ class Transferencia {
 
   @override
   String toString() {
-    return "Transferência{valor: $valor, numeroConta: $numeroContaDestino}";
+    return 'Transferência{valor: $valor, numeroConta: $numeroContaDestino}';
   }
 }
