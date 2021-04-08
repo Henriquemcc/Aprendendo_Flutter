@@ -16,7 +16,14 @@ class BytebankApp extends StatelessWidget {
 }
 
 /// Widget do formulário de transferência
-class FormularioTransferencia extends StatelessWidget {
+class FormularioTransferencia extends StatefulWidget {
+  @override
+  _FormularioTransferenciaState createState() =>
+      _FormularioTransferenciaState();
+}
+
+/// Widget do formulário de transferência
+class _FormularioTransferenciaState extends State<FormularioTransferencia> {
   final TextEditingController _controladorCampoNumeroConta =
       TextEditingController();
   final TextEditingController _controladorCampoValor = TextEditingController();
@@ -27,24 +34,26 @@ class FormularioTransferencia extends StatelessWidget {
         appBar: AppBar(
           title: Text('Criando Transferência'),
         ),
-        body: Column(
-          children: <Widget>[
-            Editor(
-              controlador: _controladorCampoNumeroConta,
-              dica: '0000',
-              rotulo: 'Número da conta',
-            ),
-            Editor(
-              dica: '0.00',
-              controlador: _controladorCampoValor,
-              rotulo: 'Valor',
-              icone: Icons.monetization_on,
-            ),
-            RaisedButton(
-              child: Text('Confirmar'),
-              onPressed: () => _criarTransferencia(context),
-            ),
-          ],
+        body: SingleChildScrollView(
+          child: Column(
+            children: <Widget>[
+              Editor(
+                controlador: _controladorCampoNumeroConta,
+                dica: '0000',
+                rotulo: 'Número da conta',
+              ),
+              Editor(
+                dica: '0.00',
+                controlador: _controladorCampoValor,
+                rotulo: 'Valor',
+                icone: Icons.monetization_on,
+              ),
+              RaisedButton(
+                child: Text('Confirmar'),
+                onPressed: () => _criarTransferencia(context),
+              ),
+            ],
+          ),
         ));
   }
 
@@ -123,9 +132,13 @@ class _ListaTransferenciasState extends State<ListaTransferencias> {
             return FormularioTransferencia();
           }));
           future.then((transferenciaRecebida) {
-            debugPrint('chegou no then do future');
-            debugPrint('$transferenciaRecebida');
-            setState(() => widget._transferencias.add(transferenciaRecebida));
+            Future.delayed(Duration(seconds: 5), () {
+              debugPrint('chegou no then do future');
+              debugPrint('$transferenciaRecebida');
+              if (transferenciaRecebida != null)
+                setState(
+                    () => widget._transferencias.add(transferenciaRecebida));
+            });
           });
         },
       ),
