@@ -125,7 +125,7 @@ class _ListaTransferenciasState extends State<ListaTransferencias> {
           future.then((transferenciaRecebida) {
             debugPrint('chegou no then do future');
             debugPrint('$transferenciaRecebida');
-            widget._transferencias.add(transferenciaRecebida);
+            setState(() => widget._transferencias.add(transferenciaRecebida));
           });
         },
       ),
